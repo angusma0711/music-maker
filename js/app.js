@@ -19,11 +19,11 @@
   };
 
   var ICONS = {
-    happy: '<circle cx="32" cy="32" r="24" fill="#fff"/><text x="32" y="41" text-anchor="middle" font-size="24" font-weight="700" font-family="sans-serif" fill="#1c1b19">I</text>',
-    exciting: '<circle cx="32" cy="32" r="24" fill="#fff"/><text x="32" y="41" text-anchor="middle" font-size="18" font-weight="700" font-family="sans-serif" fill="#1c1b19">I–IV</text>',
-    calm: '<circle cx="32" cy="32" r="24" fill="#fff"/><text x="32" y="41" text-anchor="middle" font-size="18" font-weight="700" font-family="sans-serif" fill="#1c1b19">I–vi</text>',
-    sad: '<circle cx="32" cy="32" r="24" fill="#fff"/><text x="32" y="41" text-anchor="middle" font-size="24" font-weight="700" font-family="sans-serif" fill="#1c1b19">i</text>',
-    mysterious: '<circle cx="32" cy="32" r="24" fill="#fff"/><text x="32" y="41" text-anchor="middle" font-size="18" font-weight="700" font-family="sans-serif" fill="#1c1b19">i–iv</text>',
+    happy: '<circle cx="32" cy="32" r="24" fill="#fff"/><text x="32" y="41" text-anchor="middle" font-size="28" font-weight="700" font-family="sans-serif" fill="#1c1b19">A</text>',
+    exciting: '<circle cx="32" cy="32" r="24" fill="#fff"/><text x="32" y="41" text-anchor="middle" font-size="28" font-weight="700" font-family="sans-serif" fill="#1c1b19">B</text>',
+    calm: '<circle cx="32" cy="32" r="24" fill="#fff"/><text x="32" y="41" text-anchor="middle" font-size="28" font-weight="700" font-family="sans-serif" fill="#1c1b19">C</text>',
+    sad: '<circle cx="32" cy="32" r="24" fill="#fff"/><text x="32" y="41" text-anchor="middle" font-size="28" font-weight="700" font-family="sans-serif" fill="#1c1b19">D</text>',
+    mysterious: '<circle cx="32" cy="32" r="24" fill="#fff"/><text x="32" y="41" text-anchor="middle" font-size="28" font-weight="700" font-family="sans-serif" fill="#1c1b19">E</text>',
     slow: '<ellipse cx="30" cy="36" rx="16" ry="12" fill="#fff" stroke="#1c1b19" stroke-width="3"/><circle cx="48" cy="32" r="6" fill="#fff" stroke="#1c1b19" stroke-width="3"/><circle cx="50" cy="31" r="1.4" fill="#1c1b19"/>',
     medium: '<ellipse cx="24" cy="26" rx="8" ry="12" fill="#fff" transform="rotate(-20 24 26)"/><ellipse cx="40" cy="40" rx="8" ry="12" fill="#fff" transform="rotate(-20 40 40)"/>',
     fast: '<circle cx="46" cy="32" r="10" fill="#fff"/><path d="M8 22h20M6 32h24M10 42h16" stroke="#fff" stroke-width="5" stroke-linecap="round"/>',

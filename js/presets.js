@@ -4,12 +4,12 @@
    Melody rows stay inside a pentatonic scale so edits cannot sound "wrong". */
 (function () {
   var MOODS = [
-    /* Ids are kept for saved-settings compatibility; labels describe the sound, not a feeling. */
-    { id: 'happy', zh: '大調 C–G–Am–F', en: 'Major A', color: '#FFB703' },
-    { id: 'exciting', zh: '大調 C–F–G–C', en: 'Major B', color: '#FB5607' },
-    { id: 'calm', zh: '大調 C–Am–F–G', en: 'Major C', color: '#2A9D8F' },
-    { id: 'sad', zh: '小調 Am–F–C–G', en: 'Minor A', color: '#457B9D' },
-    { id: 'mysterious', zh: '小調 Cm–Fm–B♭–Gm', en: 'Minor B', color: '#7B2CBF' }
+    /* Ids are kept for saved-settings compatibility; neutral labels let students judge the sound by ear. */
+    { id: 'happy', zh: '和弦組 A', en: 'C G Am F', color: '#FFB703' },
+    { id: 'exciting', zh: '和弦組 B', en: 'C F G C', color: '#FB5607' },
+    { id: 'calm', zh: '和弦組 C', en: 'C Am F G', color: '#2A9D8F' },
+    { id: 'sad', zh: '和弦組 D', en: 'Am F C G', color: '#457B9D' },
+    { id: 'mysterious', zh: '和弦組 E', en: 'Cm Fm B♭ Gm', color: '#7B2CBF' }
   ];
 
   var SPEEDS = [
