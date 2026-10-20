@@ -2,7 +2,7 @@
 
 (function () {
   var MSG = {
-    ready: '選心情，再按試聽。Pick a mood, then press Preview.',
+    ready: '先選音樂元素，再按試聽。Pick the music elements, then press Preview.',
     pattern: '已換上新節奏。按試聽聽聽。New pattern loaded. Press Preview to listen.',
     preview: '正在試聽。Preview playing.',
     previewEnd: '試聽完了。Preview finished.',
@@ -19,11 +19,11 @@
   };
 
   var ICONS = {
-    happy: '<circle cx="32" cy="32" r="20" fill="#fff"/><circle cx="24" cy="28" r="3" fill="#1c1b19"/><circle cx="40" cy="28" r="3" fill="#1c1b19"/><path d="M22 38c3.5 6 16.5 6 20 0" fill="none" stroke="#1c1b19" stroke-width="3" stroke-linecap="round"/>',
-    exciting: '<polygon points="36,6 16,34 30,34 26,58 50,26 34,26" fill="#fff" stroke="#1c1b19" stroke-width="3" stroke-linejoin="round"/>',
-    calm: '<path d="M8 34c6 0 6-8 12-8s6 8 12 8 6-8 12-8 6 8 12 8" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round"/><path d="M8 46c6 0 6-8 12-8s6 8 12 8 6-8 12-8 6 8 12 8" fill="none" stroke="#1c1b19" stroke-width="4" stroke-linecap="round"/>',
-    sad: '<path d="M16 34c0-8 6-14 16-14s16 6 16 14v4H16z" fill="#fff"/><circle cx="22" cy="30" r="8" fill="#fff"/><circle cx="42" cy="30" r="10" fill="#fff"/><path d="M24 46v8M32 48v8M40 46v8" stroke="#1c1b19" stroke-width="3" stroke-linecap="round"/>',
-    mysterious: '<path d="M40 12a16 16 0 1 0 0 32 12 12 0 1 1 0-32z" fill="#fff"/><polygon points="18,18 20,24 26,24 21,28 23,34 18,30 13,34 15,28 10,24 16,24" fill="#fff"/>',
+    happy: '<circle cx="32" cy="32" r="24" fill="#fff"/><text x="32" y="41" text-anchor="middle" font-size="28" font-weight="700" font-family="sans-serif" fill="#1c1b19">A</text>',
+    exciting: '<circle cx="32" cy="32" r="24" fill="#fff"/><text x="32" y="41" text-anchor="middle" font-size="28" font-weight="700" font-family="sans-serif" fill="#1c1b19">B</text>',
+    calm: '<circle cx="32" cy="32" r="24" fill="#fff"/><text x="32" y="41" text-anchor="middle" font-size="28" font-weight="700" font-family="sans-serif" fill="#1c1b19">C</text>',
+    sad: '<circle cx="32" cy="32" r="24" fill="#fff"/><text x="32" y="41" text-anchor="middle" font-size="28" font-weight="700" font-family="sans-serif" fill="#1c1b19">D</text>',
+    mysterious: '<circle cx="32" cy="32" r="24" fill="#fff"/><text x="32" y="41" text-anchor="middle" font-size="28" font-weight="700" font-family="sans-serif" fill="#1c1b19">E</text>',
     slow: '<ellipse cx="30" cy="36" rx="16" ry="12" fill="#fff" stroke="#1c1b19" stroke-width="3"/><circle cx="48" cy="32" r="6" fill="#fff" stroke="#1c1b19" stroke-width="3"/><circle cx="50" cy="31" r="1.4" fill="#1c1b19"/>',
     medium: '<ellipse cx="24" cy="26" rx="8" ry="12" fill="#fff" transform="rotate(-20 24 26)"/><ellipse cx="40" cy="40" rx="8" ry="12" fill="#fff" transform="rotate(-20 40 40)"/>',
     fast: '<circle cx="46" cy="32" r="10" fill="#fff"/><path d="M8 22h20M6 32h24M10 42h16" stroke="#fff" stroke-width="5" stroke-linecap="round"/>',
@@ -177,9 +177,9 @@
       el.className = 'cards cols-' + cols;
       el.innerHTML = html;
     }
-    fill('moodCards', 'mood', AdPresets.moods, 5);
-    fill('speedCards', 'speed', AdPresets.speeds, 3);
     fill('instrumentCards', 'instrument', AdPresets.instruments, 5);
+    fill('speedCards', 'speed', AdPresets.speeds, 3);
+    fill('moodCards', 'mood', AdPresets.moods, 5);
     fill('styleCards', 'style', AdPresets.styles, 4);
     refreshSelection();
   }

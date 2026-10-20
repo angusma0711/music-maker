@@ -34,11 +34,12 @@
     </header>
 
     <div class="steps" aria-label="步驟 Steps">
-      <div class="step"><i>1</i>選節奏 <span class="en">Choose</span></div>
+      <div class="step"><i>1</i>選音樂元素 <span class="en">Choose</span></div>
       <div class="step"><i>2</i>試聽 <span class="en">Play</span></div>
+      <div class="step"><i>3</i>想一想 <span class="en">Reflect</span></div>
     </div>
 
-    <p id="status" class="status" role="status">選心情，再按試聽。Pick a mood, then press Preview.</p>
+    <p id="status" class="status" role="status">先選音樂元素，再按試聽。Pick the music elements, then press Preview.</p>
 
     <div class="layout single">
       <section class="panel" aria-labelledby="videoHeading" hidden>
@@ -77,13 +78,13 @@
         <p id="chordLine" class="chord-line"></p>
       </section>
 
-      <section id="cardBoard" class="panel card-col" aria-label="快速開始 Quick start">
-        <h2>心情 Mood</h2>
-        <div id="moodCards" class="cards cols-5"></div>
-        <h2>速度 Speed</h2>
-        <div id="speedCards" class="cards cols-3"></div>
+      <section id="cardBoard" class="panel card-col" aria-label="音樂元素 Music elements">
         <h2>樂器 Instrument</h2>
         <div id="instrumentCards" class="cards cols-5"></div>
+        <h2>速度 Speed</h2>
+        <div id="speedCards" class="cards cols-3"></div>
+        <h2>和弦 Chords</h2>
+        <div id="moodCards" class="cards cols-5"></div>
         <h2>風格 Style</h2>
         <div id="styleCards" class="cards cols-4"></div>
         <p class="hint">點圖卡會換上新節奏。Picking a card loads a new pattern.</p>
@@ -108,6 +109,13 @@
         </label>
       </div>
       <p class="legal">合成聲音使用 <a href="vendor/tone/LICENSE.md">Tone.js（MIT）</a>。沒有帳戶，也不會儲存學生資料。Synthesised with Tone.js (MIT). No accounts, and no student work is stored.</p>
+    </section>
+
+    <section class="panel reflect" aria-labelledby="reflectHeading">
+      <h2 id="reflectHeading">想一想 Think about it</h2>
+      <p class="reflect-q">聽聽你做的音樂：它給你甚麼感覺？這是你想要的感覺嗎？</p>
+      <p class="reflect-q en">Listen to your music: how does it make you feel? Is it the feeling you wanted?</p>
+      <p class="hint">如果不是，試試換一個樂器、速度、和弦組或風格，再聽一次。If not, change the instrument, speed, chords or style and listen again.</p>
     </section>
   </div>
 
