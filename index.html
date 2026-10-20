@@ -30,19 +30,18 @@
           <span class="sub">Ad Music · 為廣告配上心情 Make music for the ad</span>
         </div>
       </div>
-      <button id="previewBtn" class="btn" type="button" aria-pressed="false">試聽 Preview</button>
+      <button id="previewBtn" class="btn primary" type="button" aria-pressed="false">試聽 Preview</button>
     </header>
 
     <div class="steps" aria-label="步驟 Steps">
-      <div class="step"><i>1</i>睇廣告 <span class="en">Watch</span></div>
-      <div class="step"><i>2</i>選節奏 <span class="en">Choose</span></div>
-      <div class="step"><i>3</i>配上音樂 <span class="en">Add music</span></div>
+      <div class="step"><i>1</i>選節奏 <span class="en">Choose</span></div>
+      <div class="step"><i>2</i>試聽 <span class="en">Play</span></div>
     </div>
 
-    <p id="status" class="status" role="status">先睇廣告，再選心情。Watch the ad, then pick a mood.</p>
+    <p id="status" class="status" role="status">選心情，再按試聽。Pick a mood, then press Preview.</p>
 
-    <div class="layout">
-      <section class="panel" aria-labelledby="videoHeading">
+    <div class="layout single">
+      <section class="panel" aria-labelledby="videoHeading" hidden>
         <h2 id="videoHeading">廣告 Advert</h2>
         <div class="tv">
           <div class="screen">
@@ -91,7 +90,7 @@
       </section>
     </div>
 
-    <section class="grid-section" aria-labelledby="gridHeading">
+    <section class="grid-section" aria-labelledby="gridHeading" hidden>
       <div class="grid-head">
         <div>
           <h2 id="gridHeading">音樂格子 Grid</h2>

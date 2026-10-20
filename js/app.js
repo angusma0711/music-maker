@@ -2,8 +2,8 @@
 
 (function () {
   var MSG = {
-    ready: '先睇廣告，再選心情。Watch the ad, then pick a mood.',
-    pattern: '已換上新節奏。你可以再改格子。New pattern loaded. You can still edit the grid.',
+    ready: '選心情，再按試聽。Pick a mood, then press Preview.',
+    pattern: '已換上新節奏。按試聽聽聽。New pattern loaded. Press Preview to listen.',
     preview: '正在試聽。Preview playing.',
     previewEnd: '試聽完了。Preview finished.',
     watch: '音樂跟廣告一起播放。Music is playing with the ad.',

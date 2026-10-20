@@ -175,6 +175,8 @@ h2 { font-size: 1.15rem; margin-bottom: 8px; }
   align-items: start;
 }
 
+.layout.single { grid-template-columns: 1fr; }
+
 .panel {
   background: var(--card);
   border: 2px solid var(--line);
