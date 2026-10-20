@@ -488,3 +488,7 @@ video.is-portrait {
 @media (prefers-reduced-motion: reduce) {
   * { scroll-behavior: auto !important; transition: none !important; }
 }
+
+.reflect { margin-top: 16px; }
+.reflect-q { font-size: 1.25rem; font-weight: 700; margin: 6px 0; }
+.reflect-q.en { font-size: 1.05rem; font-weight: 600; opacity: .8; }

@@ -4,11 +4,12 @@
    Melody rows stay inside a pentatonic scale so edits cannot sound "wrong". */
 (function () {
   var MOODS = [
-    { id: 'happy', zh: '開心', en: 'Happy', color: '#FFB703' },
-    { id: 'exciting', zh: '興奮', en: 'Exciting', color: '#FB5607' },
-    { id: 'calm', zh: '平靜', en: 'Calm', color: '#2A9D8F' },
-    { id: 'sad', zh: '傷心', en: 'Sad', color: '#457B9D' },
-    { id: 'mysterious', zh: '神秘', en: 'Mysterious', color: '#7B2CBF' }
+    /* Ids are kept for saved-settings compatibility; labels describe the sound, not a feeling. */
+    { id: 'happy', zh: '大調 C–G–Am–F', en: 'Major A', color: '#FFB703' },
+    { id: 'exciting', zh: '大調 C–F–G–C', en: 'Major B', color: '#FB5607' },
+    { id: 'calm', zh: '大調 C–Am–F–G', en: 'Major C', color: '#2A9D8F' },
+    { id: 'sad', zh: '小調 Am–F–C–G', en: 'Minor A', color: '#457B9D' },
+    { id: 'mysterious', zh: '小調 Cm–Fm–B♭–Gm', en: 'Minor B', color: '#7B2CBF' }
   ];
 
   var SPEEDS = [
