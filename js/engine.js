@@ -11,7 +11,11 @@
     bells: { drum: 0.5, melody: 0.85, chord: 0.16 }
   };
 
+  var MASTER_GAIN = 0.9;
+  var DYNAMICS_FADE = 0.1;
+
   var kit = null;
+  var dynamicsDb = 0;
   var seq = null;
   var ready = false;
   var getScore = function () { return null; };
@@ -376,8 +380,17 @@ score.melody.forEach(function (_row, r) {
     return Math.floor(local / stepDur + 1e-6) % 16;
   }
 
+  /* Changes only the live master gain, with a short fade so nothing restarts. */
+  function setDynamics(db) {
+    dynamicsDb = isFinite(db) ? db : 0;
+    if (!kit) return;
+    kit.master.gain.rampTo(MASTER_GAIN * Tone.dbToGain(dynamicsDb), DYNAMICS_FADE);
+  }
+
   window.AdEngine = {
     init: init,
+    setDynamics: setDynamics,
+    masterGain: function () { return kit ? kit.master.gain.value : null; },
     setTempo: setTempo,
     setInstrument: function (name) {
       if (!kit) return;

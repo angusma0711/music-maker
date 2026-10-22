@@ -1,8 +1,15 @@
 'use strict';
 
 (function () {
+  /* Lesson settings. SHOW_MOOD = true brings the mood row back.
+     DYNAMICS_DB is the master volume for each dynamics card, in dB. */
+  var SHOW_MOOD = false;
+  var DYNAMICS_DB = { loud: 0, mid: -6, soft: -14 };
+  var PREVIEW_SECONDS = 30;
+
   var MSG = {
-    ready: '選心情，再按試聽。Pick a mood, then press Preview.',
+    ready: '選速度、力度、樂器和風格，再按試聽。Pick speed, dynamics, instrument and style, then press Preview.',
+    dynamics: '已換力度。New dynamics.',
     pattern: '已換上新節奏。按試聽聽聽。New pattern loaded. Press Preview to listen.',
     preview: '正在試聽。Preview playing.',
     previewEnd: '試聽完了。Preview finished.',
@@ -35,6 +42,9 @@
     bouncy: '<circle cx="24" cy="18" r="8" fill="#fff" stroke="#1c1b19" stroke-width="3"/><path d="M16 46c8-14 18-14 28 0" fill="none" stroke="#1c1b19" stroke-width="4" stroke-linecap="round"/>',
     steady: '<rect x="12" y="18" width="8" height="30" rx="2" fill="#fff"/><rect x="24" y="18" width="8" height="30" rx="2" fill="#fff"/><rect x="36" y="18" width="8" height="30" rx="2" fill="#fff"/><rect x="48" y="18" width="8" height="30" rx="2" fill="#fff"/>',
     light: '<circle cx="18" cy="32" r="5" fill="#fff"/><circle cx="32" cy="32" r="5" fill="#fff"/><circle cx="46" cy="32" r="5" fill="#fff"/>',
+    loud: '<circle cx="32" cy="32" r="22" fill="#fff"/>',
+    mid: '<circle cx="32" cy="32" r="14" fill="#fff"/>',
+    soft: '<circle cx="32" cy="32" r="7" fill="#fff"/>',
     groovy: '<path d="M8 36c6-12 10-12 16 0s10 12 16 0 10-12 16 0" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round"/>'
   };
 
@@ -45,7 +55,8 @@
     speed: 'medium',
     instrument: 'piano',
     style: 'bouncy',
-    length: 15,
+    dynamics: 'mid',
+    length: PREVIEW_SECONDS,
     bpm: 104,
     scale: [],
     scaleName: { zh: '', en: '' },
@@ -179,6 +190,7 @@
     }
     fill('moodCards', 'mood', AdPresets.moods, 5);
     fill('speedCards', 'speed', AdPresets.speeds, 3);
+    fill('dynamicsCards', 'dynamics', AdPresets.dynamics, 3);
     fill('instrumentCards', 'instrument', AdPresets.instruments, 5);
     fill('styleCards', 'style', AdPresets.styles, 4);
     refreshSelection();
@@ -308,7 +320,24 @@
     }
   }
 
+  function dynamicsDb() {
+    var db = DYNAMICS_DB[state.dynamics];
+    return typeof db === 'number' ? db : 0;
+  }
+
+  /* Dynamics only fade the master volume, so playback keeps going. */
+  function chooseDynamics(value) {
+    state.dynamics = value;
+    refreshSelection();
+    AdEngine.setDynamics(dynamicsDb());
+    setStatus(MSG.dynamics);
+  }
+
   function choose(group, value) {
+    if (group === 'dynamics') {
+      chooseDynamics(value);
+      return;
+    }
     state[group] = value;
     applyBuilt(AdPresets.build(state));
     refreshSelection();
@@ -470,6 +499,8 @@
   }
 
   video.muted = true;
+  document.getElementById('moodRow').hidden = !SHOW_MOOD;
+  if (!SHOW_MOOD) state.mood = 'happy';
   renderCards();
   applyBuilt(AdPresets.build(state));
   renderGrid();
@@ -757,6 +788,7 @@
     startBtn.textContent = '準備中… Getting ready…';
     Tone.start().then(function () {
       AdEngine.init(function () { return state; });
+      AdEngine.setDynamics(dynamicsDb());
       app.inert = false;
       gate.hidden = true;
       var title = document.getElementById('pageTitle');

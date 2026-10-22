@@ -325,7 +325,8 @@ video.is-portrait {
 
 .card-col h2 { margin-top: 12px; }
 
-.card-col h2:first-child { margin-top: 0; }
+.card-col h2:first-child,
+#moodRow + h2 { margin-top: 0; }
 
 .cards { display: grid; gap: 8px; }
 

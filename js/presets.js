@@ -28,8 +28,15 @@
   var STYLES = [
     { id: 'bouncy', zh: '彈跳', en: 'Bouncy', color: '#FFD60A' },
     { id: 'steady', zh: '穩定', en: 'Steady', color: '#52B788' },
-    { id: 'light', zh: '輕輕', en: 'Light', color: '#48CAE4' },
+    { id: 'light', zh: '疏落', en: 'Sparse', color: '#48CAE4' },
     { id: 'groovy', zh: '搖擺', en: 'Groovy', color: '#9D4EDD' }
+  ];
+
+  /* Dynamics only change the master volume; see DYNAMICS_DB in app.js. */
+  var DYNAMICS = [
+    { id: 'loud', zh: '強', en: 'Loud', color: '#C1121F' },
+    { id: 'mid', zh: '中', en: 'Medium', color: '#E9A825' },
+    { id: 'soft', zh: '弱', en: 'Soft', color: '#8FA9B5' }
   ];
 
   var DRUM_ROWS = [
@@ -265,6 +272,7 @@
   window.AdPresets = {
     moods: MOODS,
     speeds: SPEEDS,
+    dynamics: DYNAMICS,
     instruments: INSTRUMENTS,
     styles: STYLES,
     drumRows: DRUM_ROWS,

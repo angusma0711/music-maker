@@ -38,7 +38,7 @@
       <div class="step"><i>2</i>試聽 <span class="en">Play</span></div>
     </div>
 
-    <p id="status" class="status" role="status">選心情，再按試聽。Pick a mood, then press Preview.</p>
+    <p id="status" class="status" role="status">選速度、力度、樂器和風格，再按試聽。Pick speed, dynamics, instrument and style, then press Preview.</p>
 
     <div class="layout single">
       <section class="panel" aria-labelledby="videoHeading" hidden>
@@ -78,10 +78,14 @@
       </section>
 
       <section id="cardBoard" class="panel card-col" aria-label="快速開始 Quick start">
-        <h2>心情 Mood</h2>
-        <div id="moodCards" class="cards cols-5"></div>
+        <div id="moodRow">
+          <h2>心情 Mood</h2>
+          <div id="moodCards" class="cards cols-5"></div>
+        </div>
         <h2>速度 Speed</h2>
         <div id="speedCards" class="cards cols-3"></div>
+        <h2>力度 Dynamics</h2>
+        <div id="dynamicsCards" class="cards cols-3"></div>
         <h2>樂器 Instrument</h2>
         <div id="instrumentCards" class="cards cols-5"></div>
         <h2>風格 Style</h2>
