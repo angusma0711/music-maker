@@ -89,7 +89,7 @@
      Keep accented melody notes supported instead of imposing a pop loop.
      Hop/Dance: E -> A -> E -> A/C, supported by I/IV (plagal return).
      March: E -> G -> A -> G, supported by I/V/IV/V (V -> I on repeat).
-     Float: E -> G, supported by I/V, with one chord per half-bar.
+     Float: E -> G -> E -> G across two bars; prolong I until the final V.
      References and exact timing: docs/HARMONY.md. */
   var CHILD_CHORDS = {
     C: ['C4', 'E4', 'G4'],
@@ -99,7 +99,7 @@
   var CHILD_PROGRESSIONS = {
     bouncy: ['C', 'F', 'C', 'F'],
     steady: ['C', 'G', 'F', 'G'],
-    light: ['C', 'G', 'C', 'G'],
+    light: ['C', 'C', 'C', 'G'],
     groovy: ['C', 'F', 'C', 'F']
   };
 

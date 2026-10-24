@@ -14,7 +14,7 @@ Float played one chord per half-bar (eight steps), but `floor(step / 4)` selecte
 | --- | --- | --- | --- |
 | Hop | E G A G / E G A C (eighth-note attacks) | C–F–C–F | one chord per beat; IV returns to I on repeat |
 | March | E G A G (quarter-note attacks) | C–G–F–G | one chord per beat; V returns to I on repeat |
-| Float | E G (half-bar-separated short notes) | C–G–C–G | one chord per two beats; four slots span two bars |
+| Float | E G / E G (half-bar-separated short notes) | C–C–C–G | one chord per two beats; four slots span two bars; V returns to I on repeat |
 | Dance | E G A / E G A (syncopated) | C–F–C–F | one chord per beat; IV returns to I on repeat |
 
 C = C4/E4/G4, F = C4/F4/A4, G = B3/D4/G4. Close inversions limit movement; the accompaniment remains in the middle register when the instrument changes octave. Stable chord tones support the principal melody attacks; brief other pentatonic tones remain melodic decoration. There is no added G7 or chromatic chord, and no copied nursery melody.
@@ -23,7 +23,16 @@ The hidden non-happy presets retain their existing tonal progressions. The sched
 
 ## References
 
-- [Zebra Keys: Row, Row, Row Your Boat](https://www.zebrakeys.com/blog/row-row-row-your-boat/) explicitly teaches C and G accompaniment (I and V in C major). This supports Float's limited two-chord vocabulary; it is not the exact song's full chord sequence.
+- [Zebra Keys: Row, Row, Row Your Boat](https://www.zebrakeys.com/blog/row-row-row-your-boat/) explicitly teaches C and G accompaniment (I and V in C major). This supports Float's limited two-chord vocabulary and tonic prolongation; it is not the exact song's full chord sequence.
 - [Flag Uke Jam: Twinkle, Twinkle, Little Star chord sheet](https://www.flagukejam.com/uploads/1/2/0/0/120030922/twinkle_twinkle_little_star.pdf) uses C, F, G and G7. It supports the tonic/subdominant/dominant vocabulary and returns to tonic. Our Hop/Dance use a plagal IV–I return, and March a V–I return; those sequences are tailored to the app's melody.
 
-Current browser selection when this change was requested: Fast / Loud / Bells / Float. Its base E4/G4 notes sound as E6/G6 because Bells retains its +2-octave register. Its half-bar chords run C–G–C–G at 132 BPM (approximately 0.91 seconds per chord). A full four-slot harmonic cycle lasts two bars (approximately 3.64 seconds).
+Example selection: Fast / Loud / Bells / Float. Its base E4/G4 notes sound as E6/G6 because Bells retains its +2-octave register. Its half-bar chords run C–C–C–G at 132 BPM (approximately 0.91 seconds per chord). A full four-slot harmonic cycle lasts two bars (approximately 3.64 seconds).
+
+## Loop selection rationale
+
+- **Hop:** C–F–C–F supports accented E/A/E/A, with G as a brief neighbour/passing tone and final C over F. The IV–I join is a gentle plagal return. Keep this existing progression.
+- **March:** C–G–F–G supports each quarter-note E/G/A/G as a chord tone; the last V leads to the next I. Keep this existing progression.
+- **Float:** C–C–C–G supports E/G/E/G as chord tones over two bars. Compared with C–G–C–G it has fewer harmonic changes, with the dominant reserved for the end of the phrase. Repeated C chords still articulate every two beats. This is the changed progression.
+- **Dance:** C–F–C–F supports the syncopated G before the F change and A just after it. It shares Hop's progression because the pitch groupings are similar; the rhythmic pattern gives it a different character. Keep this existing progression.
+
+These are practical choices for these exact short motifs, not a universal ranking of chord progressions. Tests verify the original melody attacks, strong-beat chord tones over a full harmonic cycle, instrument invariance and live/offline timing.

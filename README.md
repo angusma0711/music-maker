@@ -83,4 +83,4 @@ NODE_PATH=/path/to/node_modules node tests/sound-quality.cjs
 
 ## 兒歌式和聲
 
-保留旋律，改用配合各風格的簡單 C／F／G 和弦。Float 使用 C–G–C–G，Hop／Dance 使用 C–F–C–F，March 使用 C–G–F–G。修正八步和弦只播放第 1、3 個和弦的索引問題，Live 和 WAV 採用相同時序。原和弦、新配法、拍數與兒歌參考見 [和聲說明](docs/HARMONY.md)。
+保留旋律，改用配合各風格的簡單 C／F／G 和弦。Float 使用 C–C–C–G，Hop／Dance 使用 C–F–C–F，March 使用 C–G–F–G。修正八步和弦只播放第 1、3 個和弦的索引問題，Live 和 WAV 採用相同時序。原和弦、新配法、拍數與兒歌參考見 [和聲說明](docs/HARMONY.md)。

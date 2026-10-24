@@ -6,10 +6,24 @@ const { chromium } = require('playwright-core');
 const scope = {window:{}};
 vm.runInNewContext(fs.readFileSync(path.join(__dirname,'../js/presets.js'),'utf8'),scope);
 const presets=scope.window.AdPresets;
-const expected={bouncy:['C','F','C','F'],steady:['C','G','F','G'],light:['C','G','C','G'],groovy:['C','F','C','F']};
+const expected={bouncy:['C','F','C','F'],steady:['C','G','F','G'],light:['C','C','C','G'],groovy:['C','F','C','F']};
+const motifs={bouncy:'3.2.1.2.3.2.1.0.',steady:'3...2...1...2...',light:'3.......2.......',groovy:'3..2.1..3..2.1..'};
 for(const style of Object.keys(expected)) {
  const score=presets.build({mood:'happy',speed:'medium',style});
  assert.equal(JSON.stringify(score.chordNames),JSON.stringify(expected[style]));
+ // Preserve every original melody event; test strong-beat support across the
+ // full harmonic cycle, including Float's second melody repetition.
+ const encoded=Array.from({length:16},(_,step)=>{
+  const row=score.melody.findIndex(r=>r[step]);return row<0?'.':String(row);
+ }).join('');
+ assert.equal(encoded,motifs[style]);
+ assert.equal(score.chordNames[0],'C');
+ for(let step=0;step<score.chordEvery*4;step+=4){
+  const chord=score.chords[Math.floor(step/score.chordEvery)];
+  score.melody.forEach((row,r)=>{if(row[step%16]){
+   assert(chord.some(note=>note.slice(0,-1)===score.scale[r].slice(0,-1)),style+' unsupported strong beat '+step);
+  }});
+ }
  for(const instrument of presets.instruments) {
   const other=presets.build({mood:'happy',speed:'medium',style,instrument:instrument.id});
   assert.equal(JSON.stringify(other.melody),JSON.stringify(score.melody));
@@ -21,7 +35,7 @@ for(const style of Object.keys(expected)) {
  try {
   const page=await browser.newPage();const errors=[];page.on('pageerror',e=>errors.push(e.message));
   await page.goto(process.env.APP_URL||'http://127.0.0.1:8754/');await page.locator('#startBtn').click();await page.waitForSelector('#gate',{state:'hidden'});
-  // A distinct four-chord fixture catches skipped slots even when Float repeats I/V.
+  // A distinct four-chord fixture catches skipped slots even when a preset repeats chords.
   await page.evaluate(()=>{
    window.fixture=AdPresets.build({mood:'calm',speed:'medium',style:'light'});
    fixture.instrument='piano';fixture.dynamics='mid';fixture.bpm=240;
