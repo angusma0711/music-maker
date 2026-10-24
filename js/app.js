@@ -836,7 +836,9 @@
     startBtn.disabled = true;
     startBtn.textContent = '準備中… Getting ready…';
     Tone.start().then(function () {
-      AdEngine.init(function () { return state; });
+      gateMsg.textContent = '正在載入樂器聲音… Loading instrument sounds…';
+      return AdEngine.init(function () { return state; });
+    }).then(function () {
       AdEngine.setDynamics(dynamicsDb());
       app.inert = false;
       gate.hidden = true;
@@ -847,7 +849,7 @@
       console.error(err);
       startBtn.disabled = false;
       startBtn.textContent = '開始 Start';
-      gateMsg.textContent = '聲音未能開啟，請再按一次。Sound did not start. Tap again.';
+      gateMsg.textContent = '樂器聲音未能載入，請重新載入頁面或再試一次。Instrument sounds could not load. Reload or try again.';
     });
   });
 

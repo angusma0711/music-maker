@@ -2,7 +2,7 @@
 
 給香港小三（大約 8 歲）用的課堂原型。學生先看一段廣告，再用格子做一段 **10–30 秒**、配合畫面心情的配樂，然後把廣告和自己的音樂同步再看一次。
 
-沒有 AI、沒有帳戶、沒有後端，也**不會儲存學生資料**。所有聲音都在瀏覽器裡用合成器做出來。
+沒有 AI、沒有帳戶、沒有後端，也**不會儲存學生資料**。旋律樂器及鋼琴和弦使用隨程式附帶的真實樂器錄音（samples），鼓聲由 Tone.js 合成。
 
 ## 如何開啟
 
@@ -46,7 +46,7 @@ npx --yes serve -l tcp://0.0.0.0:8743
 
 ## 已知限制
 
-- 聲音是合成的，不是真實鋼琴、弦樂或鼓組。
+- 低音大提琴、大提琴、鋼琴、長笛和鈴鐘使用真實錄音。鈴鐘採用 glockenspiel；弦樂採用拉弦音色。每種樂器只有一層演奏力度，Dynamics 調整音量，不會改變演奏手法。鼓組仍是合成聲音。
 - 只有一段會重複的 16 格，不是按廣告每一幕分開寫的長曲。
 - 預設廣告約 5.2 秒，短於配樂的 10–30 秒。一起看的時候，畫面結束，音樂就停。音樂長度一到也會停，即使影片還在播。
 - 同步跟裝置的聲音延遲有關。暫停或拖動進度會再對齊一次，但有些 iPad 仍可能慢一點點。
@@ -64,3 +64,19 @@ NODE_PATH=/tmp/admusic-verify/node_modules node tests/verify.mjs
 ```
 
 伺服器要先在 `http://127.0.0.1:8743` 開著。檢查會用無頭 Chrome 確認：預設節奏、改格子、影片同步、WAV 和 JSON。
+
+## 樂器音色更新
+
+五種旋律樂器使用 25 個錄音 samples；附近音高由 Tone.Sampler 移調，保留原有各樂器的音域、節奏、速度與力度功能。和弦固定使用鋼琴錄音。首次按 Start 會先解碼音源，載入完成才可進入；失敗時可重試。最新 iPad / AirPods 音訊解鎖修正保留。
+
+音源打包在 `js/instrument-samples.js`（約 8.8 MB），支援直接開啟 `index.html` 的離線使用，不依賴外部 CDN。Live playback 和 WAV 共用解碼後的錄音；匯出保留目前力度及 1.5 秒尾音。Samples 不等於完整演奏模擬：沒有多力度層、legato 或多次輪替錄音。
+
+音源來源、授權及原始檔案 checksum 見 [Sample credits](vendor/instrument-samples/CREDITS.md) 和 [manifest](vendor/instrument-samples/manifest.json)。要重建音源可執行 `python3 tools/build-samples.py`（需要網絡）。
+
+音訊 regression checks（需先啟動本機 HTTP server 於 8754）：
+
+```bash
+NODE_PATH=/path/to/node_modules node tests/sound-quality.cjs
+```
+
+可用 `CHROME` 指定 Chrome 路徑、`APP_URL` 指定伺服器。檢查五種樂器輸出、Live 播放、30 秒停止、file:// 離線模式及音源解碼失敗後重試。音色是否足夠適合課堂仍需真人試聽；Chrome 檢查不能代替實機 iPad / AirPods 測試。

@@ -30,69 +30,81 @@
     return node;
   }
 
-  function filtered(nodes, destination, freq, q) {
-    var f = track(nodes, new Tone.Filter({ frequency: freq, type: 'lowpass', rolloff: -12, Q: q || 1 }));
-    f.connect(destination);
-    return f;
+  // Decode each recording once. Live and offline samplers share immutable buffers.
+  var sampleBuffers = null;
+  var sampleLoad = null;
+  var VOICE_SETTINGS = {
+    contrabass: { attack: 0.012, release: 0.18, volume: -3 },
+    cello: { attack: 0.012, release: 0.2, volume: -6 },
+    piano: { attack: 0, release: 0.65, volume: -5 },
+    flute: { attack: 0.012, release: 0.12, volume: -7 },
+    bells: { attack: 0, release: 1.4, volume: -6 }
+  };
+
+  function loadSamples() {
+    if (sampleBuffers) return Promise.resolve();
+    if (sampleLoad) return sampleLoad;
+    var decoded = {};
+    var loaders = [];
+    sampleLoad = Promise.resolve().then(function () {
+      if (!window.MusicMakerSamples) throw new Error('Instrument sample bank missing');
+      var tasks = [];
+      INSTRUMENT_NAMES.forEach(function (name) {
+        var bank = window.MusicMakerSamples[name];
+        if (!bank || !Object.keys(bank).length) throw new Error('Missing samples: ' + name);
+        decoded[name] = {};
+        Object.keys(bank).forEach(function (note) {
+          tasks.push(new Promise(function (resolve, reject) {
+            var buffer = new Tone.ToneAudioBuffer(bank[note], function (loaded) {
+              var audio = loaded.get();
+              var peak = 0;
+              for (var ch = 0; ch < audio.numberOfChannels; ch += 1) {
+                var channel = audio.getChannelData(ch);
+                for (var i = 0; i < channel.length; i += 1) {
+                  peak = Math.max(peak, Math.abs(channel[i]));
+                }
+              }
+              // Sources have different recording levels; normalize once before mixing.
+              if (peak > 0) {
+                var gain = 0.85 / peak;
+                for (var c = 0; c < audio.numberOfChannels; c += 1) {
+                  var data = audio.getChannelData(c);
+                  for (var j = 0; j < data.length; j += 1) data[j] *= gain;
+                }
+              }
+              decoded[name][note] = audio;
+              resolve();
+            }, reject);
+            loaders.push(buffer);
+          }));
+        });
+      });
+      return Promise.all(tasks);
+    }).then(function () {
+      sampleBuffers = decoded;
+      loaders.forEach(function (buffer) { buffer.dispose(); });
+    }).catch(function (err) {
+      loaders.forEach(function (buffer) { buffer.dispose(); });
+      sampleLoad = null;
+      throw err;
+    });
+    return sampleLoad;
   }
 
   function makeVoice(kind, destination, nodes) {
-    var synth;
-    if (kind === 'contrabass') {
-      synth = track(nodes, new Tone.PolySynth(Tone.Synth, {
-        maxPolyphony: 4,
-        oscillator: { type: 'sawtooth' },
-        envelope: { attack: 0.04, decay: 0.25, sustain: 0.65, release: 0.3 },
-        volume: 2
-      }));
-      synth.connect(filtered(nodes, destination, 520, 1.2));
-      return synth;
-    }
-    if (kind === 'cello') {
-      synth = track(nodes, new Tone.PolySynth(Tone.Synth, {
-        maxPolyphony: 4,
-        oscillator: { type: 'sawtooth' },
-        envelope: { attack: 0.07, decay: 0.15, sustain: 0.8, release: 0.35 },
-        volume: -4
-      }));
-      synth.connect(filtered(nodes, destination, 1500, 1));
-      return synth;
-    }
-    if (kind === 'flute') {
-      synth = track(nodes, new Tone.PolySynth(Tone.Synth, {
-        maxPolyphony: 4,
-        oscillator: { type: 'sine' },
-        envelope: { attack: 0.06, decay: 0.1, sustain: 0.85, release: 0.22 },
-        volume: -5
-      }));
-      synth.connect(destination);
-      return synth;
-    }
-    if (kind === 'bells') {
-      synth = track(nodes, new Tone.PolySynth(Tone.FMSynth, {
-        maxPolyphony: 6,
-        harmonicity: 8,
-        modulationIndex: 2,
-        oscillator: { type: 'sine' },
-        envelope: { attack: 0.001, decay: 1.1, sustain: 0, release: 0.9 },
-        modulation: { type: 'square' },
-        modulationEnvelope: { attack: 0.001, decay: 0.25, sustain: 0, release: 0.2 },
-        volume: -10
-      }));
-      synth.connect(destination);
-      return synth;
-    }
-    synth = track(nodes, new Tone.PolySynth(Tone.Synth, {
-      maxPolyphony: 6,
-      oscillator: { type: 'triangle' },
-      envelope: { attack: 0.008, decay: 0.35, sustain: 0.12, release: 0.7 },
-      volume: -4
+    var settings = VOICE_SETTINGS[kind];
+    var sampler = track(nodes, new Tone.Sampler({
+      urls: sampleBuffers[kind],
+      attack: settings.attack,
+      release: settings.release,
+      curve: 'exponential',
+      volume: settings.volume
     }));
-    synth.connect(destination);
-    return synth;
+    sampler.connect(destination);
+    return sampler;
   }
 
-function createKit(onlyInstrument) {
+  function createKit(onlyInstrument) {
   var nodes = [];
     var limiter = track(nodes, new Tone.Limiter(-1.5).toDestination());
     var master = track(nodes, new Tone.Gain(0.9).connect(limiter));
@@ -274,6 +286,7 @@ score.melody.forEach(function (_row, r) {
 
   function cloneScore(score) {
     return {
+      dynamics: score.dynamics,
       bpm: score.bpm,
       instrument: score.instrument,
       chordEvery: score.chordEvery,
@@ -313,8 +326,10 @@ score.melody.forEach(function (_row, r) {
 
   async function exportWav(score, duration) {
     var snapshot = cloneScore(score);
+    await loadSamples();
+    var exportGain = MASTER_GAIN * Tone.dbToGain(({ loud: 0, mid: -6, soft: -14 })[snapshot.dynamics] || 0);
     var lead = 0.03;
-    var tail = 0.28;
+    var tail = 1.5;
     var renderFor = duration + lead + tail;
     var offlineKit = null;
     var rendered = await Tone.Offline(function () {
@@ -322,8 +337,8 @@ score.melody.forEach(function (_row, r) {
       applyMix(offlineKit, snapshot.instrument);
       offlineKit.master.gain.cancelScheduledValues(0);
       offlineKit.master.gain.setValueAtTime(0.0001, 0);
-      offlineKit.master.gain.linearRampToValueAtTime(0.9, lead);
-      offlineKit.master.gain.setValueAtTime(0.9, Math.max(lead, renderFor - 0.08));
+      offlineKit.master.gain.linearRampToValueAtTime(exportGain, lead);
+      offlineKit.master.gain.setValueAtTime(exportGain, Math.max(lead, renderFor - 0.08));
       offlineKit.master.gain.linearRampToValueAtTime(0.0001, renderFor - 0.01);
       scheduleScore(offlineKit, snapshot, duration, lead);
     }, renderFor, 2, 44100);
@@ -369,8 +384,9 @@ score.melody.forEach(function (_row, r) {
     return new Blob([ab], { type: 'audio/wav' });
   }
 
-  function init(scoreGetter) {
+  async function init(scoreGetter) {
     getScore = scoreGetter;
+    await loadSamples();
     if (!kit) kit = createKit();
     var first = getScore();
     if (first) applyMix(kit, first.instrument);
