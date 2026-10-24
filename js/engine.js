@@ -201,7 +201,7 @@
     return n;
   }
 
-  function playHits(target, score, step, time, stepDur) {
+  function playHits(target, score, step, time, stepDur, absoluteStep) {
     var drums = score.drums;
     if (drums.kick[step]) target.drums.kick(time);
     if (drums.snare[step]) target.drums.snare(time);
@@ -223,7 +223,7 @@ score.melody.forEach(function (_row, r) {
 
     var every = score.chordEvery || 4;
     if (step % every === 0) {
-      var chord = score.chords[Math.floor(step / 4) % score.chords.length];
+      var chord = score.chords[Math.floor(absoluteStep / every) % score.chords.length];
       if (chord && chord.length) {
         var chordDur = Math.max(0.12, every * stepDur * 0.9);
         chordVoice.triggerAttackRelease(chord, chordDur, time, 0.5);
@@ -247,7 +247,10 @@ score.melody.forEach(function (_row, r) {
       var score = getScore();
       if (!score) return;
       var stepDur = (60 / score.bpm) / 4;
-      playHits(kit, score, step, time, stepDur);
+      // Transport ticks preserve the harmonic position across melody loops,
+      // pauses and seeks; eight-step chords must not skip slots 1 and 3.
+      var absoluteStep = Math.round(Tone.Transport.getTicksAtTime(time) / (Tone.Transport.PPQ / 4));
+      playHits(kit, score, step, time, stepDur, absoluteStep);
     }, steps, '16n');
     seq.loop = true;
     seq.start(0);
@@ -320,7 +323,7 @@ score.melody.forEach(function (_row, r) {
     for (var i = 0; i < count; i += 1) {
       var time = i * stepDur + lead;
       if (time >= duration + lead) break;
-      playHits(target, score, i % 16, time, stepDur);
+      playHits(target, score, i % 16, time, stepDur, i);
     }
   }
 

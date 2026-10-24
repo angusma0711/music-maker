@@ -70,7 +70,7 @@
   };
 
   var CHORDS = {
-    happy: [['C4', 'E4', 'G4'], ['B3', 'D4', 'G4'], ['A3', 'C4', 'E4'], ['A3', 'C4', 'F4']],
+    happy: [['C4', 'E4', 'G4'], ['C4', 'F4', 'A4'], ['C4', 'E4', 'G4'], ['C4', 'F4', 'A4']],
     exciting: [['C4', 'E4', 'G4'], ['C4', 'F4', 'A4'], ['B3', 'D4', 'G4'], ['C4', 'E4', 'G4']],
     calm: [['C4', 'E4', 'G4'], ['A3', 'C4', 'E4'], ['A3', 'C4', 'F4'], ['B3', 'D4', 'G4']],
     sad: [['A3', 'C4', 'E4'], ['A3', 'C4', 'F4'], ['C4', 'E4', 'G4'], ['B3', 'D4', 'G4']],
@@ -78,11 +78,29 @@
   };
 
   var CHORD_NAMES = {
-    happy: ['C', 'G', 'Am', 'F'],
+    happy: ['C', 'F', 'C', 'F'],
     exciting: ['C', 'F', 'G', 'C'],
     calm: ['C', 'Am', 'F', 'G'],
     sad: ['Am', 'F', 'C', 'G'],
     mysterious: ['Cm', 'Fm', 'Bb', 'Gm']
+  };
+
+  /* Nursery-style harmonization of the existing happy/pentatonic motifs.
+     Keep accented melody notes supported instead of imposing a pop loop.
+     Hop/Dance: E -> A -> E -> A/C, supported by I/IV (plagal return).
+     March: E -> G -> A -> G, supported by I/V/IV/V (V -> I on repeat).
+     Float: E -> G, supported by I/V, with one chord per half-bar.
+     References and exact timing: docs/HARMONY.md. */
+  var CHILD_CHORDS = {
+    C: ['C4', 'E4', 'G4'],
+    F: ['C4', 'F4', 'A4'],
+    G: ['B3', 'D4', 'G4']
+  };
+  var CHILD_PROGRESSIONS = {
+    bouncy: ['C', 'F', 'C', 'F'],
+    steady: ['C', 'G', 'F', 'G'],
+    light: ['C', 'G', 'C', 'G'],
+    groovy: ['C', 'F', 'C', 'F']
   };
 
   /* Each character is one of 16 steps. Melody: row index 0 (high) to 4 (low), or ".". */
@@ -220,12 +238,16 @@
     var bpm = SPEED_BPM[speed] + MOOD_BPM[mood];
     bpm = Math.max(64, Math.min(160, bpm));
 
+    var nursery = mood === 'happy';
+    var chordNames = nursery ? CHILD_PROGRESSIONS[style] : CHORD_NAMES[mood];
+    var chords = nursery ? chordNames.map(function (name) { return CHILD_CHORDS[name]; }) : CHORDS[mood];
+
     return {
       bpm: bpm,
       scale: SCALES[mood].slice(),
       scaleName: { zh: SCALE_NAMES[mood].zh, en: SCALE_NAMES[mood].en },
-      chords: CHORDS[mood].map(function (notes) { return notes.slice(); }),
-      chordNames: CHORD_NAMES[mood].slice(),
+      chords: chords.map(function (notes) { return notes.slice(); }),
+      chordNames: chordNames.slice(),
       chordEvery: (mood === 'calm' || mood === 'sad' || style === 'light') ? 8 : 4,
       drums: drums,
       melody: melodyToGrid(shaped)
