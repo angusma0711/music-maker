@@ -3,13 +3,18 @@
 /* Live playback uses Tone.js. WAV export builds a second instrument kit inside
    Tone.Offline so the file matches the grid without recording the microphone. */
 (function () {
-  var MIX = {
-    piano: { drum: 0.9, melody: 0.8, chord: 0.32 },
-    drums: { drum: 1, melody: 0.42, chord: 0.12 },
-    strings: { drum: 0.62, melody: 0.72, chord: 0.42 },
-    synth: { drum: 0.85, melody: 0.75, chord: 0.26 },
-    bells: { drum: 0.5, melody: 0.85, chord: 0.16 }
-  };
+  /* One mix for every instrument, so changing instrument changes only the
+     melody voice (timbre and register). Chords always use the soft piano pad. */
+  var MIX = { drum: 0.8, melody: 0.85, chord: 0.28 };
+  var INSTRUMENT_NAMES = ['contrabass', 'cello', 'piano', 'flute', 'bells'];
+  var OCTAVE = { contrabass: -2, cello: -1, piano: 0, flute: 1, bells: 2 };
+
+  function transpose(note, octaves) {
+    if (!octaves) return note;
+    var m = /^([A-G][b#]?)(-?\d+)$/.exec(note);
+    if (!m) return note;
+    return m[1] + (Number(m[2]) + octaves);
+  }
 
   var MASTER_GAIN = 0.9;
   var DYNAMICS_FADE = 0.1;
@@ -25,19 +30,42 @@
     return node;
   }
 
+  function filtered(nodes, destination, freq, q) {
+    var f = track(nodes, new Tone.Filter({ frequency: freq, type: 'lowpass', rolloff: -12, Q: q || 1 }));
+    f.connect(destination);
+    return f;
+  }
+
   function makeVoice(kind, destination, nodes) {
     var synth;
-    var filter;
-    if (kind === 'strings') {
-      filter = track(nodes, new Tone.Filter({ frequency: 1400, type: 'lowpass', rolloff: -12 }));
-      filter.connect(destination);
+    if (kind === 'contrabass') {
       synth = track(nodes, new Tone.PolySynth(Tone.Synth, {
-        maxPolyphony: 6,
+        maxPolyphony: 4,
         oscillator: { type: 'sawtooth' },
-        envelope: { attack: 0.08, decay: 0.12, sustain: 0.8, release: 0.35 },
-        volume: -10
+        envelope: { attack: 0.04, decay: 0.25, sustain: 0.65, release: 0.3 },
+        volume: 2
       }));
-      synth.connect(filter);
+      synth.connect(filtered(nodes, destination, 520, 1.2));
+      return synth;
+    }
+    if (kind === 'cello') {
+      synth = track(nodes, new Tone.PolySynth(Tone.Synth, {
+        maxPolyphony: 4,
+        oscillator: { type: 'sawtooth' },
+        envelope: { attack: 0.07, decay: 0.15, sustain: 0.8, release: 0.35 },
+        volume: -4
+      }));
+      synth.connect(filtered(nodes, destination, 1500, 1));
+      return synth;
+    }
+    if (kind === 'flute') {
+      synth = track(nodes, new Tone.PolySynth(Tone.Synth, {
+        maxPolyphony: 4,
+        oscillator: { type: 'sine' },
+        envelope: { attack: 0.06, decay: 0.1, sustain: 0.85, release: 0.22 },
+        volume: -5
+      }));
+      synth.connect(destination);
       return synth;
     }
     if (kind === 'bells') {
@@ -49,27 +77,7 @@
         envelope: { attack: 0.001, decay: 1.1, sustain: 0, release: 0.9 },
         modulation: { type: 'square' },
         modulationEnvelope: { attack: 0.001, decay: 0.25, sustain: 0, release: 0.2 },
-        volume: -4
-      }));
-      synth.connect(destination);
-      return synth;
-    }
-    if (kind === 'synth') {
-      synth = track(nodes, new Tone.PolySynth(Tone.Synth, {
-        maxPolyphony: 6,
-        oscillator: { type: 'square' },
-        envelope: { attack: 0.01, decay: 0.14, sustain: 0.25, release: 0.18 },
-        volume: -8
-      }));
-      synth.connect(destination);
-      return synth;
-    }
-    if (kind === 'drums') {
-      synth = track(nodes, new Tone.PolySynth(Tone.Synth, {
-        maxPolyphony: 4,
-        oscillator: { type: 'sine' },
-        envelope: { attack: 0.001, decay: 0.09, sustain: 0, release: 0.05 },
-        volume: -2
+        volume: -10
       }));
       synth.connect(destination);
       return synth;
@@ -135,13 +143,12 @@ function createKit(onlyInstrument) {
     }).connect(clapFilter));
     clap.volume.value = -10;
 
-var melody = {};
-  var chords = {};
-  var names = onlyInstrument ? [onlyInstrument] : ['piano', 'drums', 'strings', 'synth', 'bells'];
+  var melody = {};
+  var names = onlyInstrument ? [onlyInstrument] : INSTRUMENT_NAMES;
   names.forEach(function (name) {
     melody[name] = makeVoice(name, melodyBus, nodes);
-    chords[name] = makeVoice(name, chordBus, nodes);
   });
+  var chordVoice = makeVoice('piano', chordBus, nodes);
 
     return {
       nodes: nodes,
@@ -160,15 +167,14 @@ var melody = {};
         tom: function (time) { tom.triggerAttackRelease('A2', 0.18, time, 0.8); }
       },
       melody: melody,
-      chords: chords
+      chordVoice: chordVoice
     };
   }
 
   function applyMix(target, instrument) {
-    var mix = MIX[instrument] || MIX.piano;
-    target.drumBus.gain.value = mix.drum;
-    target.melodyBus.gain.value = mix.melody;
-    target.chordBus.gain.value = mix.chord;
+    target.drumBus.gain.value = MIX.drum;
+    target.melodyBus.gain.value = MIX.melody;
+    target.chordBus.gain.value = MIX.chord;
   }
 
   function isStart(grid, row, step) {
@@ -192,11 +198,13 @@ var melody = {};
     if (drums.tom[step]) target.drums.tom(time);
 
     var voice = target.melody[score.instrument] || target.melody.piano;
-    var chordVoice = target.chords[score.instrument] || target.chords.piano;
+    var chordVoice = target.chordVoice;
+    var shift = OCTAVE[score.instrument] || 0;
 score.melody.forEach(function (_row, r) {
     if (!isStart(score.melody, r, step)) return;
     var note = score.scale[r];
       if (!note) return;
+      note = transpose(note, shift);
       var dur = Math.max(0.06, runLength(score.melody, r, step) * stepDur * 0.92);
       voice.triggerAttackRelease(note, dur, time, 0.84);
     });
@@ -216,8 +224,8 @@ score.melody.forEach(function (_row, r) {
     var time = Tone.now();
     Object.keys(kit.melody).forEach(function (name) {
       if (kit.melody[name].releaseAll) kit.melody[name].releaseAll(time);
-      if (kit.chords[name].releaseAll) kit.chords[name].releaseAll(time);
     });
+    if (kit.chordVoice && kit.chordVoice.releaseAll) kit.chordVoice.releaseAll(time);
   }
 
   function ensureSequence() {

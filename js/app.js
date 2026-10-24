@@ -26,6 +26,9 @@
   };
 
   var ICONS = {
+    flute: '<rect x="6" y="27" width="52" height="10" rx="5" fill="#fff" stroke="#1c1b19" stroke-width="3"/><circle cx="22" cy="32" r="2.2" fill="#1c1b19"/><circle cx="31" cy="32" r="2.2" fill="#1c1b19"/><circle cx="40" cy="32" r="2.2" fill="#1c1b19"/><circle cx="49" cy="32" r="2.2" fill="#1c1b19"/>',
+    cello: '<path d="M32 8v10" stroke="#1c1b19" stroke-width="3" stroke-linecap="round"/><path d="M26 24c0-5 12-5 12 0 0 3-3 5-3 7 0 2 6 4 6 11 0 7-6 11-9 11s-9-4-9-11c0-7 6-9 6-11 0-2-3-4-3-7z" fill="#fff" stroke="#1c1b19" stroke-width="3"/><path d="M32 30v18" stroke="#1c1b19" stroke-width="3"/>',
+    contrabass: '<path d="M32 4v10" stroke="#1c1b19" stroke-width="3" stroke-linecap="round"/><path d="M24 22c0-6 16-6 16 0 0 4-4 6-4 9 0 3 8 6 8 15 0 9-8 14-12 14s-12-5-12-14c0-9 8-12 8-15 0-3-4-5-4-9z" fill="#fff" stroke="#1c1b19" stroke-width="3"/><path d="M32 30v24" stroke="#1c1b19" stroke-width="3"/>',
     happy: '<circle cx="32" cy="32" r="20" fill="#fff"/><circle cx="24" cy="28" r="3" fill="#1c1b19"/><circle cx="40" cy="28" r="3" fill="#1c1b19"/><path d="M22 38c3.5 6 16.5 6 20 0" fill="none" stroke="#1c1b19" stroke-width="3" stroke-linecap="round"/>',
     exciting: '<polygon points="36,6 16,34 30,34 26,58 50,26 34,26" fill="#fff" stroke="#1c1b19" stroke-width="3" stroke-linejoin="round"/>',
     calm: '<path d="M8 34c6 0 6-8 12-8s6 8 12 8 6-8 12-8 6 8 12 8" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round"/><path d="M8 46c6 0 6-8 12-8s6 8 12 8 6-8 12-8 6 8 12 8" fill="none" stroke="#1c1b19" stroke-width="4" stroke-linecap="round"/>',
@@ -35,17 +38,14 @@
     medium: '<ellipse cx="24" cy="26" rx="8" ry="12" fill="#fff" transform="rotate(-20 24 26)"/><ellipse cx="40" cy="40" rx="8" ry="12" fill="#fff" transform="rotate(-20 40 40)"/>',
     fast: '<circle cx="46" cy="32" r="10" fill="#fff"/><path d="M8 22h20M6 32h24M10 42h16" stroke="#fff" stroke-width="5" stroke-linecap="round"/>',
     piano: '<rect x="8" y="16" width="48" height="34" rx="4" fill="#fff" stroke="#1c1b19" stroke-width="3"/><rect x="18" y="16" width="6" height="18" fill="#1c1b19"/><rect x="30" y="16" width="6" height="18" fill="#1c1b19"/><rect x="42" y="16" width="6" height="18" fill="#1c1b19"/>',
-    drums: '<ellipse cx="32" cy="40" rx="18" ry="8" fill="#fff" stroke="#1c1b19" stroke-width="3"/><path d="M14 40v8c0 5 8 8 18 8s18-3 18-8v-8" fill="#fff" stroke="#1c1b19" stroke-width="3"/><path d="M20 18l10 16M44 16l-8 16" stroke="#1c1b19" stroke-width="3" stroke-linecap="round"/>',
-    strings: '<rect x="30" y="6" width="4" height="18" fill="#1c1b19"/><ellipse cx="32" cy="40" rx="14" ry="16" fill="#fff" stroke="#1c1b19" stroke-width="3"/><circle cx="32" cy="40" r="4" fill="#1c1b19"/>',
-    synth: '<rect x="8" y="20" width="48" height="28" rx="6" fill="#fff" stroke="#1c1b19" stroke-width="3"/><circle cx="22" cy="34" r="5" fill="#1c1b19"/><circle cx="36" cy="34" r="5" fill="#1c1b19"/><circle cx="48" cy="30" r="3" fill="#1c1b19"/>',
     bells: '<path d="M32 8v6" stroke="#1c1b19" stroke-width="3" stroke-linecap="round"/><path d="M18 42c0-14 28-14 28 0" fill="#fff" stroke="#1c1b19" stroke-width="3"/><rect x="16" y="40" width="32" height="6" rx="2" fill="#fff" stroke="#1c1b19" stroke-width="3"/><circle cx="32" cy="52" r="3" fill="#1c1b19"/>',
-    bouncy: '<circle cx="24" cy="18" r="8" fill="#fff" stroke="#1c1b19" stroke-width="3"/><path d="M16 46c8-14 18-14 28 0" fill="none" stroke="#1c1b19" stroke-width="4" stroke-linecap="round"/>',
-    steady: '<rect x="12" y="18" width="8" height="30" rx="2" fill="#fff"/><rect x="24" y="18" width="8" height="30" rx="2" fill="#fff"/><rect x="36" y="18" width="8" height="30" rx="2" fill="#fff"/><rect x="48" y="18" width="8" height="30" rx="2" fill="#fff"/>',
-    light: '<circle cx="18" cy="32" r="5" fill="#fff"/><circle cx="32" cy="32" r="5" fill="#fff"/><circle cx="46" cy="32" r="5" fill="#fff"/>',
+    bouncy: '<circle cx="32" cy="14" r="6" fill="#fff" stroke="#1c1b19" stroke-width="3"/><path d="M32 20v14M22 26l10 4 10-4M26 46l6-12 6 12" fill="none" stroke="#1c1b19" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M14 56c6-6 10-6 14 0M36 56c6-6 10-6 14 0" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"/>',
+    steady: '<ellipse cx="22" cy="44" rx="7" ry="10" fill="#fff"/><circle cx="18" cy="31" r="2.5" fill="#fff"/><circle cx="24" cy="30" r="2.5" fill="#fff"/><ellipse cx="42" cy="26" rx="7" ry="10" fill="#fff"/><circle cx="38" cy="13" r="2.5" fill="#fff"/><circle cx="44" cy="12" r="2.5" fill="#fff"/>',
+    light: '<path d="M16 42c-6 0-8-8-2-10 0-8 10-10 14-4 4-6 14-4 14 4 6 0 8 10 0 10z" fill="#fff"/><path d="M14 52h10M30 52h20" stroke="#fff" stroke-width="3" stroke-linecap="round"/>',
     loud: '<circle cx="32" cy="32" r="22" fill="#fff"/>',
     mid: '<circle cx="32" cy="32" r="14" fill="#fff"/>',
     soft: '<circle cx="32" cy="32" r="7" fill="#fff"/>',
-    groovy: '<path d="M8 36c6-12 10-12 16 0s10 12 16 0 10-12 16 0" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round"/>'
+    groovy: '<circle cx="34" cy="12" r="6" fill="#fff" stroke="#1c1b19" stroke-width="3"/><path d="M33 18l-3 16M30 34l-8 16M30 34l10 8 2 10M32 24l-14-6M32 24l12-10" fill="none" stroke="#1c1b19" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>',
   };
 
   var CHORD_COLORS = ['#FFD6A5', '#FDFFB6', '#CAFFBF', '#9BF6FF'];
@@ -181,6 +181,7 @@
       var html = items.map(function (item) {
         return '<button type="button" class="card" data-group="' + group + '" data-value="' + item.id + '" aria-pressed="false">' +
           '<span class="pic" style="background:' + item.color + '">' + svg(item.id) + '</span>' +
+          (item.tag ? '<span class="tag">' + esc(item.tag) + '音</span>' : '') +
           '<span class="zh">' + esc(item.zh) + '</span>' +
           '<span class="en">' + esc(item.en) + '</span></button>';
       }).join('');

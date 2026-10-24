@@ -362,6 +362,16 @@ video.is-portrait {
 
 .card .en { font-size: 0.78rem; font-weight: 700; }
 
+.card .tag {
+  font-size: 0.72rem;
+  font-weight: 800;
+  line-height: 1;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: #f1ebe0;
+  color: #1c1b19;
+}
+
 .card[aria-pressed="true"] {
   border-color: var(--line);
   box-shadow: 0 1px 0 var(--line);

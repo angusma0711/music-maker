@@ -17,19 +17,22 @@
     { id: 'fast', zh: '快', en: 'Fast', color: '#E4572E' }
   ];
 
+  /* Ordered from low to high register. octave = how far the melody is moved
+     from the base scale. Only the melody voice changes between instruments. */
   var INSTRUMENTS = [
-    { id: 'piano', zh: '鋼琴', en: 'Piano', color: '#E07A3D' },
-    { id: 'drums', zh: '鼓', en: 'Drums', color: '#D62828' },
-    { id: 'strings', zh: '弦樂', en: 'Strings', color: '#2A9D8F' },
-    { id: 'synth', zh: '電子琴', en: 'Synth', color: '#3A86FF' },
-    { id: 'bells', zh: '鈴鐘', en: 'Bells', color: '#F15BB5' }
+    { id: 'contrabass', zh: '低音大提琴', en: 'Double bass', tag: '低', octave: -2, color: '#8D5A3B' },
+    { id: 'cello', zh: '大提琴', en: 'Cello', tag: '中低', octave: -1, color: '#C0713A' },
+    { id: 'piano', zh: '鋼琴', en: 'Piano', tag: '中', octave: 0, color: '#E07A3D' },
+    { id: 'flute', zh: '長笛', en: 'Flute', tag: '中高', octave: 1, color: '#3A86FF' },
+    { id: 'bells', zh: '鈴鐘', en: 'Bells', tag: '高', octave: 2, color: '#F15BB5' }
   ];
 
+  /* Style names describe movement so P3 pupils can link them to pictures. */
   var STYLES = [
-    { id: 'bouncy', zh: '彈跳', en: 'Bouncy', color: '#FFD60A' },
-    { id: 'steady', zh: '穩定', en: 'Steady', color: '#52B788' },
-    { id: 'light', zh: '疏落', en: 'Sparse', color: '#48CAE4' },
-    { id: 'groovy', zh: '搖擺', en: 'Groovy', color: '#9D4EDD' }
+    { id: 'bouncy', zh: '蹦跳', en: 'Hop', color: '#FFD60A' },
+    { id: 'steady', zh: '踏步', en: 'March', color: '#52B788' },
+    { id: 'light', zh: '飄浮', en: 'Float', color: '#48CAE4' },
+    { id: 'groovy', zh: '跳舞', en: 'Dance', color: '#9D4EDD' }
   ];
 
   /* Dynamics only change the master volume; see DYNAMICS_DB in app.js. */
@@ -188,39 +191,14 @@
     return grid;
   }
 
-  function shapeMelody(rows, instrument) {
-    var next = rows.slice();
-    if (instrument === 'bells') {
-      next = rows.map(function (row, i) {
-        if (row < 0 || i % 2 === 1) return -1;
-        return Math.max(0, row - 1);
-      });
-    } else if (instrument === 'drums') {
-      next = rows.map(function (row, i) {
-        return row >= 0 && i % 8 === 0 ? row : -1;
-      });
-    } else if (instrument === 'synth') {
-      next = rows.slice();
-      rows.forEach(function (row, i) {
-        if (row >= 0 && i + 2 < 16 && rows[i + 2] < 0) next[i + 2] = row;
-      });
-    } else if (instrument === 'strings') {
-      next = rows.slice();
-      rows.forEach(function (row, i) {
-        if (row < 0) return;
-        for (var k = 1; k <= 3 && i + k < 16; k += 1) {
-          if (rows[i + k] >= 0) break;
-          next[i + k] = row;
-        }
-      });
-    }
-    return next;
+  /* Instruments no longer reshape the melody: only timbre and register change. */
+  function shapeMelody(rows) {
+    return rows.slice();
   }
 
   function build(choice) {
     var mood = choice.mood;
     var speed = choice.speed;
-    var instrument = choice.instrument;
     var style = choice.style;
     var drumSrc = DRUMS[mood][style];
     var drums = {
@@ -237,23 +215,8 @@
       drums.hat = drums.hat.map(function (on, i) { return on || busy[i]; });
     }
 
-    if (instrument === 'bells' || instrument === 'strings') {
-      drums.hat = thinHats(drums.hat);
-      drums.tom = drums.tom.map(function () { return false; });
-    }
-    if (instrument === 'drums' && style !== 'light') {
-      var four = parseHits('x...x...x...x...', 'drum kick');
-      var hats = parseHits('x.x.x.x.x.x.x.x.', 'drum hats');
-      drums.kick = drums.kick.map(function (on, i) { return on || four[i]; });
-      drums.hat = drums.hat.map(function (on, i) { return on || hats[i]; });
-    }
-    if (instrument === 'drums' && style === 'light') {
-      var pulse = parseHits('x.......x.......', 'light drum kick');
-      drums.kick = drums.kick.map(function (on, i) { return on || pulse[i]; });
-    }
-
     var motif = parseMelody(MELODY[mood][style], mood + ' ' + style);
-    var shaped = shapeMelody(motif, instrument);
+    var shaped = shapeMelody(motif);
     var bpm = SPEED_BPM[speed] + MOOD_BPM[mood];
     bpm = Math.max(64, Math.min(160, bpm));
 

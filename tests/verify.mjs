@@ -87,7 +87,7 @@ try {
   const combos = await page.evaluate(() => {
     const moods = ['happy', 'exciting', 'calm', 'sad', 'mysterious'];
     const speeds = ['slow', 'medium', 'fast'];
-    const instruments = ['piano', 'drums', 'strings', 'synth', 'bells'];
+    const instruments = ['contrabass', 'cello', 'piano', 'flute', 'bells'];
     const styles = ['bouncy', 'steady', 'light', 'groovy'];
     for (const mood of moods) {
       for (const speed of speeds) {
