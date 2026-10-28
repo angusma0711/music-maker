@@ -7,22 +7,28 @@
   var DYNAMICS_DB = { loud: 0, mid: -6, soft: -14 };
   var PREVIEW_SECONDS = 30;
 
+  var language = 'zh';
+  var lastMessage = null;
+  var gateState = 'idle';
+  function tr(zh, en) { return language === 'en' ? en : zh; }
+  function meta(item) { return item[language] || item.zh || item.en; }
+
   var MSG = {
-    ready: '選速度、力度、樂器和風格，再按試聽。Pick speed, dynamics, instrument and style, then press Preview.',
-    dynamics: '已換力度。New dynamics.',
-    pattern: '已換上新節奏。按試聽聽聽。New pattern loaded. Press Preview to listen.',
-    preview: '正在試聽。Preview playing.',
-    previewEnd: '試聽完了。Preview finished.',
-    watch: '音樂跟廣告一起播放。Music is playing with the ad.',
-    musicEnd: '你的音樂播完了。Your music has ended.',
-    video: '正在睇廣告（未有你的音樂）。Watching the ad without your music.',
-    exporting: '正在製作 WAV… Making the WAV…',
-    exportReady: 'WAV 準備好了，按「儲存 WAV」。WAV is ready. Tap Save WAV.',
-    exportFail: '匯出失敗，請再試。Export failed. Try again.',
-    loadFail: '這個檔案讀不到。Could not read this file.',
-    videoFail: '這段影片播不到。請換一個檔案。This video cannot play. Try another file.',
-    playFail: '請再按一次播放。Tap play again.',
-    videoLoaded: '已載入你的影片。原聲會關掉。Your video is loaded. Its sound is muted.'
+    ready: ["選速度、力度、樂器和風格，再按試聽。", "Pick speed, dynamics, instrument and style, then press Preview."],
+    dynamics: ["已換力度。", "New dynamics."],
+    pattern: ["已換上新節奏。按試聽聽聽。", "New pattern loaded. Press Preview to listen."],
+    preview: ["正在試聽。", "Preview playing."],
+    previewEnd: ["試聽完了。", "Preview finished."],
+    watch: ["音樂跟廣告一起播放。", "Music is playing with the ad."],
+    musicEnd: ["你的音樂播完了。", "Your music has ended."],
+    video: ["正在睇廣告（未有你的音樂）。", "Watching the ad without your music."],
+    exporting: ["正在製作 WAV…", "Making the WAV…"],
+    exportReady: ["WAV 準備好了，按「儲存 WAV」。", "WAV is ready. Tap Save WAV."],
+    exportFail: ["匯出失敗，請再試。", "Export failed. Try again."],
+    loadFail: ["這個檔案讀不到。", "Could not read this file."],
+    videoFail: ["這段影片播不到。請換一個檔案。", "This video cannot play. Try another file."],
+    playFail: ["請再按一次播放。", "Tap play again."],
+    videoLoaded: ["已載入你的影片。原聲會關掉。", "Your video is loaded. Its sound is muted."]
   };
 
   var ICONS = {
@@ -132,7 +138,8 @@
   }
 
   function setStatus(text) {
-    statusEl.textContent = text;
+    lastMessage = text;
+    statusEl.textContent = Array.isArray(text) ? tr(text[0], text[1]) : text;
   }
 
   function setMeter(amount) {
@@ -181,9 +188,8 @@
       var html = items.map(function (item) {
         return '<button type="button" class="card" data-group="' + group + '" data-value="' + item.id + '" aria-pressed="false">' +
           '<span class="pic" style="background:' + item.color + '">' + svg(item.id) + '</span>' +
-          (item.tag ? '<span class="tag">' + esc(item.tag) + '音</span>' : '') +
-          '<span class="zh">' + esc(item.zh) + '</span>' +
-          '<span class="en">' + esc(item.en) + '</span></button>';
+          (item.tag ? '<span class="tag">' + esc(language === 'zh' ? item.tag + '音' : ({contrabass:'Low',cello:'Low–mid',piano:'Mid',flute:'Mid–high',bells:'High'})[item.id]) + '</span>' : '') +
+          '<span class="zh">' + esc(meta(item)) + '</span></button>';
       }).join('');
       var el = document.getElementById(id);
       el.className = 'cards cols-' + cols;
@@ -211,14 +217,10 @@
     var speed = findMeta(AdPresets.speeds, state.speed);
     var instrument = findMeta(AdPresets.instruments, state.instrument);
     var style = findMeta(AdPresets.styles, state.style);
-    var editedZh = state.edited ? '（已修改）' : '';
-    var editedEn = state.edited ? ' (edited)' : '';
-    summary.innerHTML = esc(mood.zh + ' · ' + speed.zh + ' · ' + instrument.zh + ' · ' + style.zh + editedZh) +
-      '<span class="en-line">' + esc(mood.en + ' · ' + speed.en + ' · ' + instrument.en + ' · ' + style.en + editedEn) +
-      ' · ' + state.bpm + ' BPM</span>';
-    scaleLine.innerHTML = esc(state.scaleName.zh) + '<span class="en">' + esc(state.scaleName.en) + '</span>';
-    chordLine.innerHTML = '和弦 ' + esc(state.chordNames.join(' · ')) +
-      '<span class="en">Chords ' + esc(state.chordNames.join(' · ')) + '</span>';
+    summary.textContent = [meta(mood), meta(speed), meta(instrument), meta(style)].join(' · ') +
+      (state.edited ? tr('（已修改）', ' (edited)') : '') + ' · ' + state.bpm + ' BPM';
+    scaleLine.textContent = meta(state.scaleName);
+    chordLine.textContent = tr('和弦 ', 'Chords ') + state.chordNames.join(' · ');
     lengthValue.textContent = String(state.length);
     lengthInput.value = String(state.length);
   }
@@ -232,16 +234,16 @@
     }).join('');
     var html = '<div class="seq">' +
       '<div class="seq-row" aria-hidden="true"><div class="row-label" style="--c:#e7e0d4"></div>' + beats + '</div>' +
-      '<div class="seq-row" aria-hidden="true"><div class="row-label" style="--c:#e7e0d4"><span class="zh">和弦</span><span class="en">Chords</span></div>' + chords + '</div>' +
-      '<p class="section-label">旋律 Melody</p>';
+      '<div class="seq-row" aria-hidden="true"><div class="row-label" style="--c:#e7e0d4">' + tr('和弦', 'Chords') + '</div>' + chords + '</div>' +
+      '<p class="section-label">' + tr('旋律', 'Melody') + '</p>';
 
     state.scale.forEach(function (note, row) {
-      var hint = row === 0 ? '高 High' : (row === 4 ? '低 Low' : note);
-      html += rowHtml('melody', String(row), note, hint, AdPresets.melodyColors[row], state.melody[row], '旋律 ' + note);
+      var hint = row === 0 ? tr('高', 'High') : (row === 4 ? tr('低', 'Low') : note);
+      html += rowHtml('melody', String(row), note, hint, AdPresets.melodyColors[row], state.melody[row], tr('旋律 ', 'Melody ') + note);
     });
-    html += '<p class="section-label">鼓 Drums</p>';
+    html += '<p class="section-label">' + tr('鼓', 'Drums') + '</p>';
     AdPresets.drumRows.forEach(function (drum) {
-      html += rowHtml('drum', drum.id, drum.zh, drum.en, drum.color, state.drums[drum.id], drum.zh + ' ' + drum.en);
+      html += rowHtml('drum', drum.id, meta(drum), '', drum.color, state.drums[drum.id], meta(drum));
     });
     html += '</div>';
     grid.innerHTML = html;
@@ -255,11 +257,11 @@
       var shade = step % 8 < 4 ? ' is-shade' : '';
       buttons += '<button type="button" class="cell' + (on ? ' is-on' : '') + shade + '" data-kind="' + kind +
         '" data-index="' + index + '" data-step="' + step + '" aria-pressed="' + (on ? 'true' : 'false') +
-        '" aria-label="' + esc(label + ' 第' + (step + 1) + '格 step ' + (step + 1)) +
+        '" aria-label="' + esc(label + tr(' 第' + (step + 1) + '格', ' step ' + (step + 1))) +
         '" style="--c:' + color + '"></button>';
     }
     return '<div class="seq-row"><div class="row-label" style="--c:' + color + '"><span class="zh">' + esc(zh) +
-      '</span><span class="en">' + esc(en) + '</span></div>' + buttons + '</div>';
+      '</span>' + (en ? '<span class="en">' + esc(en) + '</span>' : '') + '</div>' + buttons + '</div>';
   }
 
   function setPlayhead(step) {
@@ -350,12 +352,12 @@
 
   function updateButtons() {
     var playing = !video.paused && !video.ended;
-    videoToggle.textContent = playing ? '暫停 Pause' : '播放 Play';
+    videoToggle.textContent = playing ? tr('暫停', 'Pause') : tr('播放', 'Play');
     videoToggle.setAttribute('aria-pressed', playing ? 'true' : 'false');
     watchAd.setAttribute('aria-pressed', mode === 'video' && playing ? 'true' : 'false');
     watchMusic.setAttribute('aria-pressed', mode === 'watch' ? 'true' : 'false');
     var previewing = mode === 'preview';
-    previewBtn.textContent = previewing ? '停止 Stop' : '試聽 Preview';
+    previewBtn.textContent = previewing ? tr('停止', 'Stop') : tr('試聽', 'Preview');
     previewBtn.setAttribute('aria-pressed', previewing ? 'true' : 'false');
   }
 
@@ -369,13 +371,13 @@
 
   function updateTvLabel() {
     var seconds = isFinite(video.duration) ? Math.round(video.duration) : null;
-    var tail = seconds ? ' · ' + seconds + ' 秒 sec' : '';
+    var tail = seconds ? ' · ' + seconds + tr(' 秒', ' sec') : '';
     if (videoKind === 'local') {
-      tvLabel.textContent = localName + (seconds ? ' · ' + seconds + ' 秒' : '');
+      tvLabel.textContent = localName + (seconds ? ' · ' + seconds + tr(' 秒', ' sec') : '');
     } else if (videoKind === 'demo') {
-      tvLabel.textContent = '陽光橙示範 Orange demo' + tail;
+      tvLabel.textContent = tr('陽光橙示範', 'Orange demo') + tail;
     } else {
-      tvLabel.textContent = '廣告 Ad' + tail;
+      tvLabel.textContent = tr('廣告', 'Ad') + tail;
     }
   }
 
@@ -616,7 +618,7 @@
   video.addEventListener('ended', function () {
     if (AdEngine.ready) AdEngine.pauseMusic();
     updateButtons();
-    if (mode === 'watch' || mode === 'video') setStatus('廣告播完。The ad finished.');
+    if (mode === 'watch' || mode === 'video') setStatus(["廣告播完。", "The ad finished."]);
   });
 
   video.addEventListener('seeked', function () {
@@ -765,7 +767,7 @@
     link.click();
     link.remove();
     setTimeout(function () { URL.revokeObjectURL(url); }, 2000);
-    setStatus('已下載設定。Settings downloaded.');
+    setStatus(["已下載設定。", "Settings downloaded."]);
   });
 
   loadJson.addEventListener('change', function () {
@@ -776,7 +778,7 @@
     reader.onload = function () {
       try {
         applyLoaded(JSON.parse(String(reader.result)));
-        setStatus('已載入設定。Settings loaded.');
+        setStatus(["已載入設定。", "Settings loaded."]);
       } catch (err) {
         console.error(err);
         setStatus(MSG.loadFail);
@@ -834,9 +836,10 @@
   startBtn.addEventListener('click', function () {
     unlockAudio();
     startBtn.disabled = true;
-    startBtn.textContent = '準備中… Getting ready…';
+    gateState = 'loading';
+    renderGate();
     Tone.start().then(function () {
-      gateMsg.textContent = '正在載入樂器聲音… Loading instrument sounds…';
+      renderGate();
       return AdEngine.init(function () { return state; });
     }).then(function () {
       AdEngine.setDynamics(dynamicsDb());
@@ -848,10 +851,42 @@
     }).catch(function (err) {
       console.error(err);
       startBtn.disabled = false;
-      startBtn.textContent = '開始 Start';
-      gateMsg.textContent = '樂器聲音未能載入，請重新載入頁面或再試一次。Instrument sounds could not load. Reload or try again.';
+      gateState = 'error';
+      renderGate();
     });
   });
+
+  function renderGate() {
+    startBtn.textContent = gateState === 'loading' ? tr('準備中…', 'Getting ready…') : tr('開始', 'Start');
+    gateMsg.textContent = gateState === 'loading' ? tr('正在載入樂器聲音…', 'Loading instrument sounds…') :
+      (gateState === 'error' ? tr('樂器聲音未能載入，請重新載入頁面或再試一次。', 'Instrument sounds could not load. Reload or try again.') : '');
+  }
+
+  function setLanguage(value) {
+    language = value === 'en' ? 'en' : 'zh';
+    document.documentElement.lang = language === 'en' ? 'en' : 'zh-Hant';
+    document.title = tr('音樂創作坊', 'Music Maker');
+    document.querySelectorAll('[data-zh]').forEach(function (el) {
+      el.textContent = el.getAttribute('data-' + language);
+    });
+    document.querySelectorAll('[data-aria-zh]').forEach(function (el) {
+      el.setAttribute('aria-label', el.getAttribute('data-aria-' + language));
+    });
+    document.querySelectorAll('[data-language]').forEach(function (button) {
+      button.setAttribute('aria-pressed', String(button.getAttribute('data-language') === language));
+    });
+    renderCards();
+    renderSummary();
+    renderGrid();
+    updateButtons();
+    updateTvLabel();
+    renderGate();
+    if (lastMessage) setStatus(lastMessage);
+  }
+  document.querySelectorAll('[data-language]').forEach(function (button) {
+    button.addEventListener('click', function () { setLanguage(button.getAttribute('data-language')); });
+  });
+  setLanguage(language);
 
   requestAnimationFrame(tick);
 

@@ -84,3 +84,9 @@ NODE_PATH=/path/to/node_modules node tests/sound-quality.cjs
 ## 兒歌式和聲
 
 保留旋律，改用配合各風格的簡單 C／F／G 和弦。Float 使用 C–C–C–G，Hop／Dance 使用 C–F–C–F，March 使用 C–G–F–G。修正八步和弦只播放第 1、3 個和弦的索引問題，Live 和 WAV 採用相同時序。原和弦、新配法、拍數與兒歌參考見 [和聲說明](docs/HARMONY.md)。
+
+## 介面語言
+
+頁面頂部的「中文／English」可在開始前或播放中切換。介面每次只顯示所選語言，包括圖卡、提示、播放狀態及無障礙標籤。預設為繁體中文；切換不改動樂曲、力度或播放位置，也不儲存額外資料。
+
+語言切換檢查：`NODE_PATH=/path/to/node_modules node tests/language.cjs`（支援 `APP_URL` 和 `CHROME`）。

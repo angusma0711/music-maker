@@ -499,3 +499,9 @@ video.is-portrait {
 @media (prefers-reduced-motion: reduce) {
   * { scroll-behavior: auto !important; transition: none !important; }
 }
+
+/* Outside the inert app and above the gate: available before audio starts. */
+.language-bar { position: relative; z-index: 40; width: min(1120px, 100%); margin: 0 auto; padding: 12px 16px 0; display: flex; justify-content: flex-end; }
+.language-switch { display: flex; gap: 4px; padding: 4px; border: 2px solid var(--ink); border-radius: 16px; background: var(--card); }
+.language-switch button { border: 0; border-radius: 10px; min-height: 44px; padding: 8px 16px; font-weight: 800; background: transparent; cursor: pointer; }
+.language-switch button[aria-pressed="true"] { background: var(--ink); color: #fff; }
